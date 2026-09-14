@@ -780,6 +780,21 @@
                         <button class="btn" style="flex: 1; font-size: 11px;" onclick="triggerFavoriteAnimation()">⭐ 2-Tap: Fav FX</button>
                         <button class="btn" id="btnAnimLock" style="flex: 1; font-size: 11px;" onclick="toggleAnimationLock()">🔒 4-Tap: Lock</button>
                     </div>
+
+                    <!-- 2-Tap Favorite FX Selector -->
+                    <div style="margin-top: 8px; padding: 8px 10px; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <label class="form-label" style="font-size: 11px; margin-bottom: 0; color: var(--amber-bright);">⭐ 2-Tap Favorite FX Target</label>
+                            <span id="dedicatedFxBadge" style="font-size: 10px; font-weight: 700; color: var(--amber-bright); font-family: 'JetBrains Mono', monospace;">#00</span>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <select class="text-input" id="selectDedicatedFx" style="flex: 1; font-size: 11px;" onchange="onDedicatedFxChange(this.value)">
+                            </select>
+                            <button class="btn btn-primary" style="font-size: 11px; padding: 5px 10px; white-space: nowrap;" onclick="saveDedicatedFx()">💾 Save</button>
+                        </div>
+                        <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">Double-tap the physical button to instantly jump to this effect.</div>
+                    </div>
+
                     <div class="form-group" style="margin-top: 8px; margin-bottom: 0;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <label class="form-label" style="font-size: 11px; margin-bottom: 0;">Active Built-in FX</label>
@@ -790,6 +805,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Indicator Test Stalk Panel & Telemetry Log -->
             <div class="card">
@@ -2078,6 +2094,35 @@
                 selectAnimation(systemState.dedicatedFxId || 0, false);
             }
             logTerminal("Double tap: Favorite anim triggered. Auto-cycling will resume in 10s.", "sys");
+        }
+
+        function onDedicatedFxChange(val) {
+            const id = parseInt(val);
+            if (!isNaN(id)) {
+                systemState.dedicatedFxId = id;
+                updateDedicatedFxBadge(id);
+            }
+        }
+
+        function updateDedicatedFxBadge(id) {
+            const badge = document.getElementById('dedicatedFxBadge');
+            if (!badge) return;
+            const animNames = typeof ANIM_NAMES !== 'undefined' ? ANIM_NAMES : null;
+            if (animNames && animNames[id]) {
+                badge.textContent = `#${String(id).padStart(2,'0')} ${animNames[id]}`;
+            } else {
+                badge.textContent = `#${String(id).padStart(2,'0')}`;
+            }
+        }
+
+        async function saveDedicatedFx() {
+            const id = parseInt(document.getElementById('selectDedicatedFx')?.value);
+            if (isNaN(id)) { logTerminal("⚠️ Select a favorite FX first.", "warn"); return; }
+            systemState.dedicatedFxId = id;
+            updateDedicatedFxBadge(id);
+            await sendCommand({ cmd: "SET_DEDICATED_FX", dedicatedFxId: id });
+            saveLocalStudioSettings();
+            logTerminal(`⭐ 2-Tap Favorite FX saved: #${String(id).padStart(2,'0')}. Physical double-tap will now jump to this effect!`, "sys");
         }
 
         function toggleAnimationLock() {
@@ -3934,7 +3979,9 @@
                 }
                 if (pkt.dedicatedFxId !== undefined) {
                     systemState.dedicatedFxId = pkt.dedicatedFxId;
-                    if (document.getElementById('selectDedicatedFx')) document.getElementById('selectDedicatedFx').value = pkt.dedicatedFxId;
+                    const sel = document.getElementById('selectDedicatedFx');
+                    if (sel) sel.value = pkt.dedicatedFxId;
+                    if (typeof updateDedicatedFxBadge === 'function') updateDedicatedFxBadge(pkt.dedicatedFxId);
                 }
                 if (pkt.shuffle !== undefined) {
                     systemState.shuffle = pkt.shuffle;
