@@ -1,0 +1,30 @@
+{
+  "name": "OSPREY-64x8 Automotive Display",
+  "version": "2.5.0",
+  "home_page": "https://github.com",
+  "funding_url": "https://github.com",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        {
+          "path": "bootloader.bin",
+          "offset": 0
+        },
+        {
+          "path": "partitions.bin",
+          "offset": 32768
+        },
+        {
+          "path": "boot_app0.bin",
+          "offset": 57344
+        },
+        {
+          "path": "firmware.bin",
+          "offset": 65536
+        }
+      ]
+    }
+  ]
+}
