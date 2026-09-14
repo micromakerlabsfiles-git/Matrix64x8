@@ -819,9 +819,9 @@
                         </div>
                     </div>
 
-                    <!-- Fixed Hardware Pinout Notice -->
-                    <div style="font-size: 11px; padding: 5px 8px; border-radius: 5px; margin-bottom: 8px; background: rgba(0, 229, 255, 0.06); border: 1px solid rgba(0, 229, 255, 0.2); color: var(--cyan-accent); font-family: 'JetBrains Mono', monospace;">
-                        🔒 Fixed Pinout: DIN=GPIO 2 • Button=GPIO 6 • Right=GPIO 3 • Left=GPIO 4 • Hazard=GPIO 5
+                    <!-- Dynamic Hardware Pinout Notice -->
+                    <div id="indPinoutBanner" style="font-size: 11px; padding: 5px 8px; border-radius: 5px; margin-bottom: 8px; background: rgba(0, 229, 255, 0.06); border: 1px solid rgba(0, 229, 255, 0.2); color: var(--cyan-accent); font-family: 'JetBrains Mono', monospace;">
+                        🔌 Pinout: DIN=GPIO <span id="pinLabelDin">2</span> • Button=GPIO <span id="pinLabelBtn">6</span> • Right=GPIO <span id="pinLabelRight">3</span> • Left=GPIO <span id="pinLabelLeft">4</span> • Hazard=GPIO <span id="pinLabelHazard">5</span>
                     </div>
 
                     <!-- Active Hazard Diagnosis Callout Banner -->
@@ -832,36 +832,36 @@
 
                     <!-- Live GPIO Status Grid -->
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;">
-                        <!-- Left Turn GPIO 4 -->
+                        <!-- Left Turn - Dynamic Pin Label -->
                         <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 8px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">
-                                <span style="font-weight: 600;">GPIO 4 (Left)</span>
+                                <span style="font-weight: 600;">GPIO <span id="indLabelLeftPin">4</span> (Left)</span>
                                 <span id="badgeLeftRaw" style="font-family: monospace; font-size: 10px; padding: 1px 4px; border-radius: 3px; background: rgba(255,255,255,0.1); color: #e2e8f0;">RAW: ?</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                 <span id="badgeLeftStatus" style="font-size: 11px; font-weight: 700; color: #94a3b8;">IDLE</span>
                                 <span id="badgeLeftPolarity" style="font-size: 10px; color: #38bdf8;">Active-LOW</span>
                             </div>
-                            <button class="btn" id="btnToggleLeftPolarity" style="width: 100%; font-size: 11px; padding: 4px 0;" onclick="toggleIndicatorPolarity('left')">Toggle Polarity</button>
+                            <button class="btn" id="btnToggleLeftPolarity" style="width: 100%; font-size: 11px; padding: 4px 0;" onclick="toggleIndicatorPolarity('left')">Switch to Active-HIGH</button>
                         </div>
 
-                        <!-- Right Turn GPIO 3 -->
+                        <!-- Right Turn - Dynamic Pin Label -->
                         <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 8px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">
-                                <span style="font-weight: 600;">GPIO 3 (Right)</span>
+                                <span style="font-weight: 600;">GPIO <span id="indLabelRightPin">3</span> (Right)</span>
                                 <span id="badgeRightRaw" style="font-family: monospace; font-size: 10px; padding: 1px 4px; border-radius: 3px; background: rgba(255,255,255,0.1); color: #e2e8f0;">RAW: ?</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                 <span id="badgeRightStatus" style="font-size: 11px; font-weight: 700; color: #94a3b8;">IDLE</span>
                                 <span id="badgeRightPolarity" style="font-size: 10px; color: #38bdf8;">Active-LOW</span>
                             </div>
-                            <button class="btn" id="btnToggleRightPolarity" style="width: 100%; font-size: 11px; padding: 4px 0;" onclick="toggleIndicatorPolarity('right')">Toggle Polarity</button>
+                            <button class="btn" id="btnToggleRightPolarity" style="width: 100%; font-size: 11px; padding: 4px 0;" onclick="toggleIndicatorPolarity('right')">Switch to Active-HIGH</button>
                         </div>
 
-                        <!-- Hazard Switch GPIO 5 -->
+                        <!-- Hazard Switch - Dynamic Pin Label -->
                         <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 8px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">
-                                <span style="font-weight: 600;">GPIO 5 (Hazard)</span>
+                                <span style="font-weight: 600;">GPIO <span id="indLabelHazardPin">5</span> (Hazard)</span>
                                 <span id="badgeHazardRaw" style="font-family: monospace; font-size: 10px; padding: 1px 4px; border-radius: 3px; background: rgba(255,255,255,0.1); color: #e2e8f0;">RAW: ?</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -870,7 +870,7 @@
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
                                 <button class="btn" id="btnToggleHazardEnable" style="font-size: 10.5px; padding: 4px 0;" onclick="toggleHazardPinEnable()">Enable Pin</button>
-                                <button class="btn" id="btnToggleHazardPolarity" style="font-size: 10.5px; padding: 4px 0;" onclick="toggleIndicatorPolarity('hazard')">Polarity</button>
+                                <button class="btn" id="btnToggleHazardPolarity" style="font-size: 10.5px; padding: 4px 0;" onclick="toggleIndicatorPolarity('hazard')">Active-HIGH</button>
                             </div>
                         </div>
                     </div>
@@ -879,9 +879,9 @@
                     <div style="font-size: 11.5px; line-height: 1.45; color: #cbd5e1; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 6px; padding: 8px 10px;">
                         <strong style="color: #fbbf24;">💡 Indicator & Hazard Wiring Guide:</strong>
                         <ul style="margin: 4px 0 0 16px; padding: 0;">
-                            <li><strong>Right:</strong> Connected to <strong>GPIO 3</strong> (Hardware defined in Config.h).</li>
-                            <li><strong>Left:</strong> Connected to <strong>GPIO 4</strong> (Hardware defined in Config.h).</li>
-                            <li><strong>Hazard:</strong> Connected to <strong>GPIO 5</strong> (Hardware defined in Config.h).</li>
+                            <li><strong>Right:</strong> Connected to <strong>GPIO <span id="wiringLabelRight">3</span></strong> (configurable in Pin Settings).</li>
+                            <li><strong>Left:</strong> Connected to <strong>GPIO <span id="wiringLabelLeft">4</span></strong> (configurable in Pin Settings).</li>
+                            <li><strong>Hazard:</strong> Connected to <strong>GPIO <span id="wiringLabelHazard">5</span></strong> (configurable in Pin Settings).</li>
                             <li><strong>Instant Fix:</strong> Click <span style="color: #34d399; font-weight: 600;">"⚡ Set ALL to Active-HIGH (Op-Amp Fix)"</span> if op-amp outputs 3.3V when active.</li>
                             <li><span style="color: #f87171; font-weight: 600;">⚠️ Voltage Warning:</span> Ensure op-amp output voltage does <strong>NOT exceed 3.3V</strong>.</li>
                         </ul>
@@ -2270,17 +2270,24 @@
             systemState.panelCount = pc;
             systemState.maxPowerVolts = mv;
 
-            const pinData = parseInt(document.getElementById('cfgLedDataPin')?.value) || systemState.ledDataPin || 2;
-            const pinBtn = parseInt(document.getElementById('cfgButtonPin')?.value) || systemState.buttonPin || 6;
-            const pinRight = parseInt(document.getElementById('cfgTurnRightPin')?.value) || systemState.turnRightPin || 3;
-            const pinLeft = parseInt(document.getElementById('cfgTurnLeftPin')?.value) || systemState.turnLeftPin || 4;
-            const pinHaz = parseInt(document.getElementById('cfgHazardPin')?.value) || systemState.hazardPin || 5;
+            const _parsePin = (id, fallbackState, fallbackDef) => {
+                const raw = document.getElementById(id)?.value;
+                const parsed = parseInt(raw);
+                return (!isNaN(parsed) && raw !== '' && raw !== undefined) ? parsed : (fallbackState ?? fallbackDef);
+            };
+            const pinData  = _parsePin('cfgLedDataPin',   systemState.ledDataPin,   2);
+            const pinBtn   = _parsePin('cfgButtonPin',    systemState.buttonPin,    6);
+            const pinRight = _parsePin('cfgTurnRightPin', systemState.turnRightPin, 3);
+            const pinLeft  = _parsePin('cfgTurnLeftPin',  systemState.turnLeftPin,  4);
+            const pinHaz   = _parsePin('cfgHazardPin',    systemState.hazardPin,    5);
 
             systemState.ledDataPin = pinData;
             systemState.buttonPin = pinBtn;
             systemState.turnRightPin = pinRight;
             systemState.turnLeftPin = pinLeft;
             systemState.hazardPin = pinHaz;
+            // Keep indicator section labels in sync with new pin config
+            if (typeof updateIndicatorPinLabels === 'function') updateIndicatorPinLabels();
 
             const cMsg = (document.getElementById('customMsgInput') ? document.getElementById('customMsgInput').value : (systemState.customMessage || "MICROMAKER LABS x OSPREY")).trim() || "MICROMAKER LABS x OSPREY";
             systemState.customMessage = cMsg;
@@ -3163,7 +3170,31 @@
             }
         }
 
+        function updateIndicatorPinLabels() {
+            const pinL = systemState.turnLeftPin  !== undefined ? systemState.turnLeftPin  : 4;
+            const pinR = systemState.turnRightPin !== undefined ? systemState.turnRightPin : 3;
+            const pinH = systemState.hazardPin    !== undefined ? systemState.hazardPin    : 5;
+            const pinD = systemState.ledDataPin   !== undefined ? systemState.ledDataPin   : 2;
+            const pinB = systemState.buttonPin    !== undefined ? systemState.buttonPin    : 6;
+            // Top banner
+            const setSpan = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            setSpan('pinLabelDin',    pinD);
+            setSpan('pinLabelBtn',    pinB);
+            setSpan('pinLabelRight',  pinR);
+            setSpan('pinLabelLeft',   pinL);
+            setSpan('pinLabelHazard', pinH);
+            // Card headers
+            setSpan('indLabelLeftPin',   pinL);
+            setSpan('indLabelRightPin',  pinR);
+            setSpan('indLabelHazardPin', pinH);
+            // Wiring guide
+            setSpan('wiringLabelRight',  pinR);
+            setSpan('wiringLabelLeft',   pinL);
+            setSpan('wiringLabelHazard', pinH);
+        }
+
         function updatePolarityUI() {
+            updateIndicatorPinLabels();
             const lHigh = !!systemState.indLeftActiveHigh;
             const rHigh = !!systemState.indRightActiveHigh;
             const hHigh = !!systemState.indHazardActiveHigh;
@@ -3239,7 +3270,8 @@
                 hazardHigh: systemState.indHazardActiveHigh,
                 hazardEn: systemState.indHazardPinEnabled
             });
-            logTerminal(`⚡ Hardware indicator configuration updated: Left=${systemState.indLeftActiveHigh ? 'Active-HIGH (Op-Amp)' : 'Active-LOW (GND)'}, Right=${systemState.indRightActiveHigh ? 'Active-HIGH' : 'Active-LOW'}, Hazard=${systemState.indHazardActiveHigh ? 'Active-HIGH' : 'Active-LOW'}, GPIO 5 Pin=${systemState.indHazardPinEnabled ? 'ENABLED' : 'DISABLED'}. Saved to Flash memory!`, 'sys');
+            const _hPin = systemState.hazardPin !== undefined ? systemState.hazardPin : 5;
+            logTerminal(`⚡ Indicator polarity updated: Left=${systemState.indLeftActiveHigh ? 'Active-HIGH (Op-Amp)' : 'Active-LOW (GND)'}, Right=${systemState.indRightActiveHigh ? 'Active-HIGH' : 'Active-LOW'}, Hazard=${systemState.indHazardActiveHigh ? 'Active-HIGH' : 'Active-LOW'}, GPIO ${_hPin} Hazard Pin=${systemState.indHazardPinEnabled ? 'ENABLED' : 'DISABLED'}. Saved to Flash!`, 'sys');
         }
 
         function toggleIndicatorPolarity(channel) {
@@ -3322,15 +3354,18 @@
 
             if (pkt.indicator === 3) {
                 const isDual = (pkt.indLeft && pkt.indRight);
+                const pinL = systemState.turnLeftPin  !== undefined ? systemState.turnLeftPin  : 4;
+                const pinR = systemState.turnRightPin !== undefined ? systemState.turnRightPin : 3;
+                const pinH = systemState.hazardPin   !== undefined ? systemState.hazardPin    : 5;
                 if (diagReason) {
                     diagReason.textContent = isDual 
-                        ? "🚨 HAZARD ACTIVE: Both Left (GPIO 4) & Right (GPIO 2) are detected together!" 
-                        : "🚨 HAZARD ACTIVE: GPIO 5 dedicated switch pin is asserted!";
+                        ? `🚨 HAZARD ACTIVE: Both Left (GPIO ${pinL}) & Right (GPIO ${pinR}) are detected together!` 
+                        : `🚨 HAZARD ACTIVE: GPIO ${pinH} dedicated switch pin is asserted!`;
                 }
                 if (diagAdvice) {
                     diagAdvice.innerHTML = isDual 
                         ? `<span style="color:#fbbf24;">If turn signals are OFF, your op-amps output 0V. Click <strong>"Set ALL to Active-HIGH"</strong> to fix!</span>`
-                        : `<span style="color:#fbbf24;">If GPIO 5 is unused, click <strong>"Disable Pin"</strong> on GPIO 5!</span>`;
+                        : `<span style="color:#fbbf24;">If GPIO ${pinH} is unused, click <strong>"Disable Pin"</strong> on GPIO ${pinH}!</span>`;
                 }
                 if (diagBanner) {
                     diagBanner.style.background = "rgba(239, 68, 68, 0.15)";
@@ -3338,7 +3373,8 @@
                     diagBanner.style.color = "#fca5a5";
                 }
             } else if (pkt.indicator === 1) {
-                if (diagReason) diagReason.textContent = "◀ LEFT TURN ACTIVE (GPIO 4 pulsing).";
+                const pinL = systemState.turnLeftPin !== undefined ? systemState.turnLeftPin : 4;
+                if (diagReason) diagReason.textContent = `◄ LEFT TURN ACTIVE (GPIO ${pinL} pulsing).`;
                 if (diagAdvice) diagAdvice.textContent = "";
                 if (diagBanner) {
                     diagBanner.style.background = "rgba(245, 158, 11, 0.12)";
@@ -3346,7 +3382,8 @@
                     diagBanner.style.color = "#fbbf24";
                 }
             } else if (pkt.indicator === 2) {
-                if (diagReason) diagReason.textContent = "RIGHT TURN ACTIVE ▶ (GPIO 2 pulsing).";
+                const pinR = systemState.turnRightPin !== undefined ? systemState.turnRightPin : 3;
+                if (diagReason) diagReason.textContent = `RIGHT TURN ACTIVE ► (GPIO ${pinR} pulsing).`;
                 if (diagAdvice) diagAdvice.textContent = "";
                 if (diagBanner) {
                     diagBanner.style.background = "rgba(245, 158, 11, 0.12)";
@@ -3377,7 +3414,7 @@
                         topBadge.style.color = '#fbbf24';
                         topBadge.style.borderColor = '#f59e0b';
                     } else if (pkt.indicator === 3) {
-                        topBadge.textContent = (pkt.indLeft && pkt.indRight) ? '▲ HAZARD (DUAL STALK)' : '▲ HAZARD (GPIO 5)';
+                        topBadge.textContent = (pkt.indLeft && pkt.indRight) ? '▲ HAZARD (DUAL STALK)' : `▲ HAZARD (GPIO ${systemState.hazardPin !== undefined ? systemState.hazardPin : 5})`;
                         topBadge.style.background = 'rgba(239, 68, 68, 0.2)';
                         topBadge.style.color = '#f87171';
                         topBadge.style.borderColor = '#ef4444';
@@ -3805,6 +3842,8 @@
                     systemState.hazardPin = pkt.hazardPin;
                     if (document.getElementById('cfgHazardPin')) document.getElementById('cfgHazardPin').value = pkt.hazardPin;
                 }
+                // Refresh all indicator pin labels after receiving updated pins from device
+                if (typeof updateIndicatorPinLabels === 'function') updateIndicatorPinLabels();
 
                 if (pkt.maxCurrent !== undefined) {
                     systemState.maxCurrent = pkt.maxCurrent;
